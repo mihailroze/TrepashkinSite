@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Биография{% endblock %}
+{% block header_title %}Биография{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bio-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid red;
+    }
+    .bio-photo {
+        float: left;
+        margin-right: 20px;
+        border: 1px solid black;
+        max-width: 200px;
+        height: auto;
+    }
+    .bio-text {
+        line-height: 1.6;
+    }
+    /* Адаптивность */
+    @media (max-width: 600px) {
+        .bio-photo {
+            float: none;
+            margin: 0 auto 20px;
+            display: block;
+            max-width: 150px;
+        }
+        .bio-container {
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bio-container">
+    {% if bio %}
+        {% if bio.photo %}
+            <img src="{{ bio.photo.url }}" alt="{{ bio.full_name }}" class="bio-photo">
+        {% endif %}
+        <h2>{{ bio.full_name }}</h2>
+        <p><strong>Дата рождения:</strong> {{ bio.birth_date|date:"d E Y года" }}</p>
+        <p class="bio-text">{{ bio.bio_text }}</p>
+    {% else %}
+        <p>Информация о биографии пока отсутствует.</p>
+    {% endif %}
+</div>
+{% endblock %}

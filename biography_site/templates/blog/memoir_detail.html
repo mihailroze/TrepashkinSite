@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}{{ memoir.title }}{% endblock %}
+{% block header_title %}{{ memoir.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .memoir-detail-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .memoir-detail-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .memoir-detail-title {
+        font-size: 2.5em;
+        color: #c62828;
+        margin: 0 0 20px;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    .memoir-detail-content {
+        font-size: 1.1em;
+        color: #333;
+        line-height: 1.8;
+        margin: 0 0 20px;
+    }
+    .memoir-detail-meta {
+        font-size: 0.95em;
+        color: #1a1a1a;
+        margin: 15px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .memoir-detail-category {
+        font-style: italic;
+        color: #c62828;
+        background-color: rgba(198, 40, 40, 0.1);
+        padding: 3px 10px;
+        border-radius: 12px;
+    }
+    .memoir-detail-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    .memoir-detail-tag {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.9em;
+    }
+    .memoir-detail-date {
+        font-size: 0.9em;
+        color: #1a1a1a;
+        font-style: italic;
+        margin-top: 15px;
+        display: block;
+    }
+    @media (max-width: 768px) {
+        .memoir-detail-container {
+            margin: 30px auto;
+            padding: 15px;
+        }
+        .memoir-detail-title {
+            font-size: 2em;
+        }
+        .memoir-detail-image {
+            max-height: 300px;
+        }
+        .memoir-detail-content {
+            font-size: 1em;
+        }
+    }
+    @media (max-width: 480px) {
+        .memoir-detail-title {
+            font-size: 1.6em;
+        }
+        .memoir-detail-image {
+            max-height: 200px;
+        }
+        .memoir-detail-meta {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="memoir-detail-container">
+    {% if memoir.image %}
+        <img src="{{ memoir.image.url }}" alt="{{ memoir.title }}" class="memoir-detail-image">
+    {% endif %}
+    <h1 class="memoir-detail-title">{{ memoir.title }}</h1>
+    <div class="memoir-detail-content">{{ memoir.content|linebreaks }}</div>
+    <div class="memoir-detail-meta">
+        <span class="memoir-detail-category">{{ memoir.category.name }}</span>
+    </div>
+    {% if memoir.tags.all %}
+        <div class="memoir-detail-tags">
+            {% for tag in memoir.tags.all %}
+                <span class="memoir-detail-tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <small class="memoir-detail-date">{{ memoir.created_at|date:"d E Y" }}</small>
+</div>
+{% endblock %}

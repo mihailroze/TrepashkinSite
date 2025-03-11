@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% block title %}Блог{% endblock %}
+{% block header_title %}{% if selected_category %}{{ selected_category.name }}{% else %}Блог{% endif %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .blog-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: flex;
+        gap: 30px;
+    }
+    .blog-sidebar {
+        width: 250px;
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .blog-sidebar h3 {
+        font-size: 1.4em;
+        color: #c62828;
+        margin-bottom: 15px;
+    }
+    .blog-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .blog-sidebar li {
+        margin: 10px 0;
+    }
+    .blog-sidebar a {
+        color: #1a1a1a;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    .blog-sidebar a:hover,
+    .blog-sidebar a.active {
+        color: #c62828;
+    }
+    .blog-content {
+        flex: 1;
+        background: linear-gradient(to bottom, #f9f9f9, #ffffff);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+    }
+    .blog-content h2 {
+        font-size: 2.8em;
+        color: #c62828;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    .blog-content h2::after {
+        content: '';
+        width: 70px;
+        height: 4px;
+        background-color: #1a1a1a;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+    .blog-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 30px;
+    }
+    .blog-post {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .blog-post:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        background-color: #fefefe;
+    }
+    .blog-post::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background-color: #c62828;
+        transition: height 0.3s ease;
+    }
+    .blog-post:hover::before {
+        height: 8px;
+    }
+    .blog-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 15px;
+        float: left;
+        transition: transform 0.3s ease;
+    }
+    .blog-post:hover .blog-image {
+        transform: scale(1.05);
+    }
+    .blog-title {
+        font-size: 1.6em;
+        color: #c62828;
+        margin: 0 0 12px;
+        font-weight: 600;
+        line-height: 1.3;
+        transition: color 0.3s ease;
+    }
+    .blog-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+    .blog-post:hover .blog-title a {
+        color: #b71c1c;
+    }
+    .blog-content {
+        font-size: 1em;
+        color: #333;
+        line-height: 1.7;
+        margin: 0 0 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .blog-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    .blog-tag {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 0.85em;
+        transition: background-color 0.3s ease;
+    }
+    .blog-tag:hover {
+        background-color: #c62828;
+    }
+    .blog-date {
+        font-size: 0.85em;
+        color: #1a1a1a;
+        font-style: italic;
+        margin-top: 10px;
+        display: block;
+    }
+    .empty-message {
+        text-align: center;
+        font-size: 1.3em;
+        color: #666;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    @media (max-width: 768px) {
+        .blog-container {
+            flex-direction: column;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+        .blog-sidebar {
+            width: 100%;
+            padding: 15px;
+        }
+        .blog-content {
+            padding: 15px;
+        }
+        .blog-content h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+        .blog-list {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .blog-post {
+            padding: 20px;
+        }
+        .blog-image {
+            width: 80px;
+            height: 80px;
+        }
+        .blog-title {
+            font-size: 1.4em;
+        }
+    }
+    @media (max-width: 480px) {
+        .blog-content h2 {
+            font-size: 1.8em;
+        }
+        .blog-title {
+            font-size: 1.3em;
+        }
+        .blog-content {
+            font-size: 0.95em;
+            -webkit-line-clamp: 2;
+        }
+        .blog-image {
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="blog-container">
+    <div class="blog-sidebar">
+        <h3>Категории</h3>
+        <ul>
+            <li><a href="{% url 'blog_list' %}" {% if not selected_category %}class="active"{% endif %}>Все</a></li>
+            {% for category in categories %}
+                <li><a href="{% url 'blog_by_category' category.id %}" {% if selected_category and selected_category.id == category.id %}class="active"{% endif %}>{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="blog-content">
+        <h2>{% if selected_category %}{{ selected_category.name }}{% else %}Блог{% endif %}</h2>
+        {% if posts %}
+            <div class="blog-list">
+                {% for post in posts %}
+                    <div class="blog-post">
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="blog-image">
+                        {% else %}
+                            <img src="https://via.placeholder.com/100x100" alt="Нет изображения" class="blog-image">
+                        {% endif %}
+                        <h3 class="blog-title"><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
+                        <p class="blog-content">{{ post.content }}</p>
+                        {% if post.tags.all %}
+                            <div class="blog-tags">
+                                {% for tag in post.tags.all %}
+                                    <span class="blog-tag">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="blog-date">{{ post.created_at|date:"d E Y" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-message">Постов в блоге пока нет.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
